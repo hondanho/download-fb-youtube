@@ -1,0 +1,71 @@
+﻿@page "/"
+@using DownloadWeb.Shared.Component
+@using DownloadWeb.Utils
+@using DownloadWeb.ViewModel.Youtube
+
+<div class="search-panel">
+    <EditForm Model="@ViewModel" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <CustomFormValidator @ref="_customFormValidator" />
+        <div class="form-group row">
+            <div class="col">
+                <InputText class="form-control" @bind-Value="@ViewModel.Link" @onblur="OnBlurLink" />
+                <ValidationMessage For="@(() => ViewModel.Link)" />
+            </div>
+        </div>
+
+        @if (ViewModel.StreamInfos is not null && ViewModel.StreamInfos.Any()) {
+            <div class="result-box video" data-hid="101" style="">
+                <div class="thumb-box thumb-272 ">
+                    <a href="#" class="clip" data-player-id="video_player_1673126501067_334">
+                        <img src="@ViewModel.Metadata.Thumbnails.FirstOrDefault()?.Url" class="thumb">
+                        <span class="play-btn"></span>
+                    </a>
+                </div>
+                <div class="info-box">
+                    <div class="meta">
+                        <div class="row title" title="UFC 281 Fight- Israel Adesanya vs Brad Tavares (Full Fight)">@ViewModel.Metadata.Title</div>
+                        <div class="row duration" title="">@ViewModel.Metadata.Duration.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Quality</th>
+                                <th scope="col">Resolution(pixel)</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var vsi in ViewModel.StreamInfos) {
+                                var urlVideo = vsi.Url;
+                                <tr>
+                                    <td>@vsi.Container.ToString()</td>
+                                    <td>@vsi.Container.ToString()</td>
+                                    <td>@vsi.VideoQuality.ToString()</td>
+                                    <td>@vsi.VideoResolution.Width x @vsi.VideoResolution.Height</td>
+                                    <td>@vsi.Size.ToString()</td>
+                                    <td class="d-inline-flex">
+                                        <button onclick="downloadVideoFromUrl('@urlVideo')">Download</button>
+                                        <div class="d-inline-flex">
+                                            <button onclick="copyUrlToClipBoard(this, '@urlVideo')">Copy Url</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <div class="form-group" align="right">
+        </div>
+    </EditForm>
+</div>
